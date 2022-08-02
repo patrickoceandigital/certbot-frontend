@@ -16,28 +16,28 @@ Dans la seconde partie du fichier Dockerfile, l'image nginx qui est utilisée po
 
 Commandes à lancer: 
 
-1. On doit puller l'image
+a) On doit puller l'image
 
-docker pull patrickoceandigital/cert-frontend:latest
+- docker pull patrickoceandigital/cert-frontend:latest
 
-2. On doit runner le container: 
--v sert a créé un mapping physique entre l'image et la machine qui host l'image afin de ne jamais perdre les infos de certboot
--p 443:443 est le port pour la connexion ssl
---net crée un network afin de faire communiquer le frontend et le backend
---name donne un nom significatif au container au lieu des nom random créé par docker
+b) On doit runner le container: 
+- -v sert a créé un mapping physique entre l'image et la machine qui host l'image afin de ne jamais perdre les infos de certboot
+- -p 443:443 est le port pour la connexion ssl
+- --net crée un network afin de faire communiquer le frontend et le backend
+- --name donne un nom significatif au container au lieu des nom random créé par docker
 
 docker run -v /etc/letsencrypt:/etc/letsencrypt -p 80:80 -p 443:443 --net certnet --name frontend patrickoceandigital/cert-frontend:latest
 
-3. On doit se connecter sur le container
-docker exec frontend -it /bin/sh
+c) On doit se connecter sur le container
+- docker exec -it frontend /bin/sh
 
-4. On lance certboot
-certbot --nginx -d duacheteur.com -d www.duacheteur.com
+d) On lance certboot
+- certbot --nginx -d duacheteur.com -d www.duacheteur.com
 
-Note: trois questions sont à répondre:
-    1. votre email
-    2. Y (j'accepte les conditions)
-    3. N (je veux pas envoyer d'info)
+- Note: trois questions sont à répondre:
+    - 1. votre email
+    - 2. Y (j'accepte les conditions)
+    - 3. N (je veux pas envoyer d'info)
 
 Suite à cette dernière commande, vous devriez voir un message de success de certboot
 
