@@ -20,7 +20,11 @@ a) On doit puller l'image
 
 - docker pull patrickoceandigital/cert-frontend:latest
 
-b) On doit runner le container: 
+b) on doit créer le network (certnet est un nom que j'ai choisi, ça aurait pu être n'importe quoi)
+
+- docker network create certnet
+
+c) On doit runner le container: 
 - -v sert a créé un mapping physique entre l'image et la machine qui host l'image afin de ne jamais perdre les infos de certboot
 - -p 443:443 est le port pour la connexion ssl
 - --net crée un network afin de faire communiquer le frontend et le backend
@@ -28,10 +32,10 @@ b) On doit runner le container:
 
 docker run -v /etc/letsencrypt:/etc/letsencrypt -p 80:80 -p 443:443 --net certnet --name frontend patrickoceandigital/cert-frontend:latest
 
-c) On doit se connecter sur le container
+d) On doit se connecter sur le container
 - docker exec -it frontend /bin/sh
 
-d) On lance certboot
+e) On lance certboot
 - certbot --nginx -d duacheteur.com -d www.duacheteur.com
 
 - Note: trois questions sont à répondre:
