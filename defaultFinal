@@ -1,0 +1,79 @@
+server {
+if ($host = www.duacheteur.com) {
+return 301 https://$host$request_uri;
+} # managed by Certbot
+
+if ($host = duacheteur.com) {
+return 301 https://$host$request_uri;
+} # managed by Certbot
+
+return 404; # managed by Certbot
+
+
+
+}
+
+
+server {
+
+	listen 443 ssl; # managed by Certbot
+	ssl_certificate /etc/letsencrypt/live/duacheteur.com/fullchain.pem; # managed by Certbot
+	ssl_certificate_key /etc/letsencrypt/live/duacheteur.com/privkey.pem; # managed by Certbot
+	include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+	ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+	
+	server_name  duacheteur.com www.duacheteur.com;
+	root /usr/share/nginx/html;
+        index index.html index.htm;
+        add_header   Cache-Control public;
+
+	
+
+
+location /api {
+     if ($request_method = 'OPTIONS') {
+        # note: ajout des deux url redirigées pour chaque request method
+        #add_header 'Access-Control-Allow-Origin' 'https://www.duacheteur.com';
+        #add_header 'Access-Control-Allow-Origin' 'https://duacheteur.com';
+        add_header 'Access-Control-Allow-Origin' '$http_origin' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+        #
+        # Custom headers and headers various browsers *should* be OK with but aren't
+        #
+        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+        #
+        # Tell client that this pre-flight info is valid for 20 days
+        #
+        add_header 'Access-Control-Max-Age' 1728000;
+        add_header 'Content-Type' 'text/plain; charset=utf-8';
+        add_header 'Content-Length' 0;
+        return 204;
+     }
+     if ($request_method = 'POST') {
+        #add_header 'Access-Control-Allow-Origin' 'https://www.duacheteur.com';
+        #add_header 'Access-Control-Allow-Origin' 'https://duacheteur.com';
+        add_header 'Access-Control-Allow-Origin' '$http_origin' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
+        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range' always;
+        add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;
+     }
+     if ($request_method = 'GET') {
+        #add_header 'Access-Control-Allow-Origin' 'https://www.duacheteur.com';
+        #add_header 'Access-Control-Allow-Origin' 'https://duacheteur.com';
+        add_header 'Access-Control-Allow-Origin' '$http_origin' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
+        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range' always;
+        add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;
+     }
+
+
+     # note: utilise backend car dans le docker et pas de https car pas configuré pour 
+     proxy_pass http://backend:8080;
+}
+
+error_page 404 /index.html;
+error_page 500 502 503 504 /50x.html;
+location = /50x.html {
+root /usr/share/nginx/html;
+}
+}

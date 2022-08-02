@@ -6,72 +6,39 @@ Build a React Hooks CRUD Application to consume Web API with Axios, display and 
 
 ![react-hooks-crud-axios-api-example](react-hooks-crud-axios-api-example.png)
 
-For instruction, please visit:
-> [React Hooks CRUD example with Axios and Web API](https://bezkoder.com/react-hooks-crud-axios-api/)
+# Certification SSL
 
-More Practice:
-> [React Hooks (Typescript) CRUD example with Axios and Web API](https://bezkoder.com/react-typescript-api-call/)
+Config nécessaire:
 
-> [React Table example: CRUD App with react-table v7](https://bezkoder.com/react-table-example-hooks-crud/)
+Dans la seconde partie du fichier Dockerfile, l'image nginx qui est utilisée pour hoster l'application buildé dans l'image node:17.0 contient une config de base pour l'application afin qu'elle puisse utiliser certboot et letsencrypt. 
 
-> [React Pagination using Hooks example](https://bezkoder.com/react-pagination-hooks/)
+ L'important c'est que les deux domaines y soient, dans mon cas, duacheteur.com et www.duacheteur.com
 
-> [React Hooks File Upload example](https://bezkoder.com/react-hooks-file-upload/)
+Commandes à lancer: 
 
-> [React Hooks: JWT Authentication & Authorization example](https://bezkoder.com/react-hooks-jwt-auth/)
+1. On doit puller l'image
 
-> [React + Redux + Hooks: JWT Authentication & Authorization example](https://bezkoder.com/react-hooks-redux-login-registration-example/)
+docker pull patrickoceandigital/cert-frontend:latest
 
-Fullstack with Node.js Express:
-> [React + Node.js Express + MySQL](https://bezkoder.com/react-node-express-mysql/)
+2. On doit runner le container: 
+-v sert a créé un mapping physique entre l'image et la machine qui host l'image afin de ne jamais perdre les infos de certboot
+-p 443:443 est le port pour la connexion ssl
+--net crée un network afin de faire communiquer le frontend et le backend
+--name donne un nom significatif au container au lieu des nom random créé par docker
 
-> [React + Node.js Express + PostgreSQL](https://bezkoder.com/react-node-express-postgresql/)
+docker run -v /etc/letsencrypt:/etc/letsencrypt -p 80:80 -p 443:443 --net certnet --name frontend patrickoceandigital/cert-frontend:latest
 
-> [React + Node.js Express + MongoDB](https://bezkoder.com/react-node-express-mongodb-mern-stack/)
+3. On doit se connecter sur le container
+docker exec frontend -it /bin/sh
 
-Fullstack with Spring Boot:
-> [React + Spring Boot + MySQL](https://bezkoder.com/react-spring-boot-crud/)
+4. On lance certboot
+certbot --nginx -d duacheteur.com -d www.duacheteur.com
 
-> [React + Spring Boot + PostgreSQL](https://bezkoder.com/spring-boot-react-postgresql/)
+Note: trois questions sont à répondre:
+    1. votre email
+    2. Y (j'accepte les conditions)
+    3. N (je veux pas envoyer d'info)
 
-> [React + Spring Boot + MongoDB](https://bezkoder.com/react-spring-boot-mongodb/)
+Suite à cette dernière commande, vous devriez voir un message de success de certboot
 
-Fullstack with Django:
-> [React.js Hooks + Django Rest Framework](https://bezkoder.com/django-react-hooks/)
-
-Serverless with Firebase:
-> [React Firebase Hooks: CRUD App with Realtime Database example](https://bezkoder.com/react-firebase-hooks-crud/)
-
-> [React Hooks Firestore example: CRUD App](https://bezkoder.com/react-hooks-firestore/)
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-### Set port
-.env
-```
-PORT=8081
-```
-
-## Project setup
-
-In the project directory, you can run:
-
-```
-npm install
-# or
-yarn install
-```
-
-or
-
-### Compiles and hot-reloads for development
-
-```
-npm start
-# or
-yarn start
-```
-
-Open [http://localhost:8081](http://localhost:8081) to view it in the browser.
-
-The page will reload if you make edits.
+Le fichier default.conf devrait avoir été modifié par certboot.
